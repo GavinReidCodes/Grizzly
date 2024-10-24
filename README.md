@@ -34,3 +34,35 @@ Grizzly runs some of it's checks in our backend. Here's why:
 
 - It also makes it harder for the checks to be bypassed while mainly keeping everything open-source.
 
+## Checks
+If a check or a check's "component" has a star next to it, it is a cloud-based check.
+
+### Combat Analysis
+- Aim (Components: Duplicate, Snap, Modulo, Heuristics*)
+
+- Auto Clicker (Components: Heuristics*)
+
+- Auto Block (Components: While, Timing, Post)
+
+- Velocity (Components: Normal, Explosion, Heuristics*)
+
+- Back Track (Components: Heuristics*)
+
+- Tick Base (Components: Heuristics*)
+
+- Range (Components: Normal, Limit)
+
+### Interaction Analysis
+- Block Raytrace (Break)
+
+- Fast Break (Normal)
+
+- Scaffold (Rotation, Position, Air Interact, Fabricated, Heuristics*)
+
+- Fast Place (Heuristics*)
+
+### Movement Analysis
+- Movement Validation (Simulation, No Slow)
+
+- Tick Speed (Normal Balance, Vehicle Balance, Negative Balance, Average)
+
