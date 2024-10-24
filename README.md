@@ -1,68 +1,36 @@
-# GrimAC
+# Grizzly - Advanced 1.8-1.21 Anti-Cheat
+## About
+Grizzly is a modified version of Grim, made to serve as an alternative for those who can't afford Polar or Intave. The goal of this project is to detect and mitigate 99% of cheaters in a matter of seconds.
 
-This project is considered feature complete for the 2.0 (open-source) branch of this project. If you would like a bugfix or enhancement and cannot sponsor the work, pull requests are welcome. You can join the [discord](https://discord.com/invite/kqQAhTmkUF) for jar releases & changelogs.
+## Requirements and Supported Plugins
+This anti-cheat supports Spigot based server softwares ranging from version 1.8.X to 1.21.X. If you are using ProtocolLib, ensure that the version is 5.0.0 or higher. 
 
-GrimAC is an open source Minecraft anticheat designed for 1.21 and supports 1.8-1.21. It is free while in beta. It will eventually become paid and/or will include offering additional subscription based paid checks. Geyser players are fully exempt.
-
-### Compiling through terminal/command prompt
-1. git clone https://github.com/GrimAnticheat/Grim.git (or click the green code button, download ZIP, then unzip it.)
-2. cd Grim
-3. gradlew build
-4. The final jar is located in build/libs
-
-### API Information
-Grim's API allows you to integrate Grim into your own plugins. For more information, check out the API's GitHub repository [here](https://github.com/GrimAnticheat/GrimAPI).
-
-## Grim supremacy
-
-Here are the main cores that make Grim stand out against other anticheats
-
+## Features
 ### Movement Simulation Engine
+Grizzly uses a movement simulation engine to mitigate almost every movement cheat. Here is how it works:
 
-* We have a 1:1 replication of the player's possible movements
-* This covers everything from basic walking, swimming, knockback, cobwebs, to bubble columns
-* It even covers riding entities from boats to pigs to striders
-* Built upon covering edge cases to confirm accuracy
-* 1.13+ clients on 1.13+ servers, 1.12- clients on 1.13+ servers, 1.13+ clients on 1.12- servers, and 1.12- clients on 1.12- servers are all supported regardless of the large technical changes between these versions.
-* The order of collisions depends on the client version and is correct
-* Accounts for minor bounding box differences between versions, for example:
-    * Single glass panes will be a + shape for 1.7-1.8 players and * for 1.9+ players
-    * 1.13+ clients on 1.8 servers see the + glass pane hitbox due to ViaVersion
-    * Many other blocks have this extreme attention to detail.
-    * Waterlogged blocks do not exist for 1.12 or below players
-    * Blocks that do not exist in the client's version use ViaVersion's replacement block
-    * Block data that cannot be translated to previous versions is replaced correctly
-    * All vanilla collision boxes have been implemented
+- Player sends a movement packet to the server.
 
-### Fully asynchronous and multithreaded design
+- Grizzly uses the player's data to predict where the player will be next. This is done by simulating what the vanilla Minecraft movement code would do.
 
-* All movement checks and the overwhelming majority of listeners run on the netty thread
-* The anticheat can scale to many hundreds of players, if not more
-* Thread safety is carefully thought out
-* The next core allows for this design
+- The predicted position is then compared to the position in the movement packet. If they don't match up, they are likely using movement cheats of some sort.
 
-### Full world replication
+### Lag Compensation System
+This anti-cheat also has an entire lag compensation system, which is used for each check. Here is what we do exactly to achieve this:
 
-* The anticheat keeps a replica of the world for each player
-* The replica is created by listening to chunk data packets, block places, and block changes
-* On all versions, chunks are compressed to 16-64 kb per chunk using palettes
-* Using this cache, the anticheat can safely access the world state
-* Per player, the cache allows for multithreaded design
-* Sending players fake blocks with packets is safe and does not lead to falses
-* The world is recreated for each player to allow lag compensation
-* Client sided blocks cause no issues with packet based blocks. Block glitching does not false the anticheat.
+- Grizzly creates a compressed version of the world using packets. This ensures that ghost blocks and block glitching along with other lag-related issues don't cause players to be falsely mitigated or punished.
 
-### Latency compensation
+- Grizzly also keeps track of the inventory to reduce lag-related false flags.
 
-* World changes are queued until they reach the player
-* This means breaking blocks under a player does not false the anticheat
-* Everything from flying status to movement speed will be latency compensated
+- Transaction packets are used to their full advantage in Grizzly, making sure that checks compensate players based on their latency.
 
-### Inventory compensation
+### Cheat Mitigation System
+Similar to Polar (and maybe Intave), Grizzly focuses on preventing cheats as opposed to banning or kicking players for (possibly) using them. By doing setbacks, reducing outgoing damage, damage speed and such, we can ensure that cheaters don't get an advantage while keeping bans or kicks to a minimum due to potential false flags.
 
-* The player's inventory is tracked to prevent ghost blocks at high latency, and other errors
+### Cloud Checks
+Grizzly runs some of it's checks in our backend. Here's why:
 
-### Secure by design, not obscurity
+- It helps improve performance on your server slightly by doing intensive calculations on our backend.
 
-* All systems are designed to be highly secure and mathematically impossible to bypass
-* For example, the prediction engine knows all possible movements and cannot be bypassed
+- It also makes it harder for the checks to be bypassed while mainly keeping everything open-source.
+
